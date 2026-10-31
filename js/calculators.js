@@ -13,6 +13,18 @@ window.LiftCalc = {
     return powerKw * hours * utilization * liftCount;
   },
   fmt(value, decimals = 1) {
-    return Number.isFinite(value) ? value.toLocaleString(undefined, {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) : "—";
+    if(Number.isFinite(value)) {
+      let formatVal = value.toFixed(decimals);
+      while(value != 0 && formatVal.substr(formatVal.length - 1) === "0") {
+        formatVal = formatVal.substring(0, formatVal.length - 1);
+    }
+    if(formatVal.substr(formatVal.length - 1) === ".") {
+      formatVal = formatVal.substring(0, formatVal.length - 1);
+    }
+    }
+    else {
+      return "—";
+    }
+    return formatVal;
   }
 };
