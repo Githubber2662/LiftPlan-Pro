@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LiftPlan Pro - preliminary elevator engineering and planning workstation">
+  <title>LiftPlan Pro | Elevator Engineering Planner</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">LP</div>
+        <div><strong>LiftPlan <span>Pro</span></strong><small>ENGINEERING WORKSPACE</small></div>
+      </div>
+      <div class="project-mini">
+        <label for="projectName">CURRENT PROJECT</label>
+        <input id="projectName" value="New Elevator Project" maxlength="80">
+        <div class="save-state"><i></i><span id="saveState">Local project</span></div>
+      </div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-page="dashboard"><b>▦</b> Dashboard</button>
+        <button class="nav-item" data-page="inputs"><b>⌘</b> Design inputs</button>
+        <button class="nav-item" data-page="traffic"><b>↗</b> Traffic analysis</button>
+        <button class="nav-item" data-page="carshaft"><b>▣</b> Car &amp; shaft</button>
+        <button class="nav-item" data-page="drive"><b>ϟ</b> Drive &amp; energy</button>
+        <button class="nav-item" data-page="calculators"><b>∑</b> Calculators</button>
+        <button class="nav-item" data-page="compliance"><b>✓</b> Standards review</button>
+        <button class="nav-item" data-page="reports"><b>▤</b> Reports &amp; export</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="standard-chip" id="sidebarStandard">EN 81 PROFILE</div>
+        <small>Preliminary engineering tool<br>Verify against adopted codes.</small>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation">☰</button>
+        <div><div class="eyebrow">ELEVATOR ENGINEERING / PLANNING</div><h1 id="pageTitle">Project dashboard</h1></div>
+        <div class="top-actions">
+          <label class="standard-select-label" for="standardMode">STANDARD PROFILE</label>
+          <select id="standardMode" class="standard-select">
+            <option value="EN 81">EN 81</option>
+            <option value="IS 17900">IS 17900</option>
+            <option value="ASME">ASME A17.1 / CSA B44</option>
+          </select>
+          <button class="btn btn-primary" id="saveProject">Save project</button>
+        </div>
+      </header>
+
+      <section class="page active" id="page-dashboard">
+        <div class="welcome-row">
+          <div><div class="eyebrow">PROJECT OVERVIEW</div><h2 id="dashboardProject">New Elevator Project</h2><p>Configure the building, evaluate elevator performance and prepare a preliminary engineering report.</p></div>
+          <div class="profile-pill"><span class="pulse"></span><span id="dashboardStandard">EN 81 planning profile</span></div>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card"><div class="metric-label">BUILDING TRAVEL</div><div class="metric-value" id="metricTravel">36.3 <small>m</small></div><div class="metric-foot" id="metricFloors">12 floors</div></article>
+          <article class="metric-card"><div class="metric-label">ELEVATOR GROUP</div><div class="metric-value" id="metricLifts">2 <small>units</small></div><div class="metric-foot" id="metricCapacity">1,000 kg rated load each</div></article>
+          <article class="metric-card"><div class="metric-label">ESTIMATED INTERVAL</div><div class="metric-value" id="metricInterval">— <small>sec</small></div><div class="metric-foot">Simplified group estimate</div></article>
+          <article class="metric-card"><div class="metric-label">5-MIN HANDLING</div><div class="metric-value" id="metricHandling">— <small>pax</small></div><div class="metric-foot" id="metricHandlingPct">Persons per five minutes</div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel span-2">
+            <div class="panel-heading"><div><h3>Design snapshot</h3><p>Live calculated project indicators</p></div><span class="tag">LIVE</span></div>
+            <div class="snapshot-grid">
+              <div><span>Car floor area</span><strong id="snapCarArea">2.24 m²</strong></div>
+              <div><span>Approx. shaft footprint / lift</span><strong id="snapShaftArea">4.62 m²</strong></div>
+              <div><span>Estimated round-trip time</span><strong id="snapRtt">— s</strong></div>
+              <div><span>Indicative motor power</span><strong id="snapMotor">— kW</strong></div>
+              <div><span>Estimated daily energy</span><strong id="snapEnergy">— kWh</strong></div>
+              <div><span>Travel speed</span><strong id="snapSpeed">1.60 m/s</strong></div>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Engineering checks</h3><p>Basic input sanity checks</p></div></div>
+            <div id="dashboardChecks" class="check-list"></div>
+          </article>
+        </div>
+        <div class="notice notice-amber"><strong>Engineering limitation</strong><p>Results are preliminary planning estimates, not certified designs or proof of code compliance. Safety dimensions, clearances, loads, electrical protection, components and acceptance tests require verification against the current locally adopted standard, authority requirements and manufacturer data.</p></div>
+      </section>
+
+      <section class="page" id="page-inputs">
+        <div class="section-intro"><div><div class="eyebrow">PROJECT PARAMETERS</div><h2>Design inputs</h2><p>Enter the project geometry and elevator group data. Calculations update automatically.</p></div><button class="btn btn-outline" id="resetInputs">Reset defaults</button></div>
+        <div class="form-layout">
+          <article class="panel">
+            <h3>Building data</h3>
+            <div class="form-grid">
+              <label>Number of floors<input type="number" min="1" id="floors" data-input value="12"></label>
+              <label>Floor-to-floor height <em>m</em><input type="number" min="0" step="0.01" id="floorHeight" data-input value="3.3"></label>
+              <label>Building population <em>persons</em><input type="number" min="0" id="population" data-input value="240"></label>
+              <label>Number of elevators <em>units</em><input type="number" min="1" id="lifts" data-input value="2"></label>
+              <label>Custom travel height <em>m (0 = auto)</em><input type="number" min="0" step="0.1" id="customTravel" data-input value="0"></label>
+              <label>Peak population demand <em>% (optional)</em><input type="number" min="0" max="100" step="0.5" id="peakDemand" data-input value="12"></label>
+            </div>
+          </article>
+          <article class="panel">
+            <h3>Elevator specification</h3>
+            <div class="form-grid">
+              <label>Rated capacity <em>kg</em><input type="number" min="1" id="capacity" data-input value="1000"></label>
+              <label>Rated speed <em>m/s</em><input type="number" min="0.1" step="0.1" id="speed" data-input value="1.6"></label>
+              <label>Car width <em>mm</em><input type="number" min="1" id="carWidth" data-input value="1400"></label>
+              <label>Car depth <em>mm</em><input type="number" min="1" id="carDepth" data-input value="1600"></label>
+              <label>Clear door opening <em>mm</em><input type="number" min="1" id="doorWidth" data-input value="900"></label>
+              <label>Door dwell time <em>seconds</em><input type="number" min="0" step="0.5" id="dwell" data-input value="5"></label>
+            </div>
+          </article>
+          <article class="panel">
+            <h3>Shaft and building envelope</h3>
+            <div class="form-grid">
+              <label>Shaft width <em>mm</em><input type="number" min="1" id="shaftWidth" data-input value="2200"></label>
+              <label>Shaft depth <em>mm</em><input type="number" min="1" id="shaftDepth" data-input value="2100"></label>
+              <label>Pit depth <em>mm</em><input type="number" min="0" id="pit" data-input value="1500"></label>
+              <label>Headroom <em>mm</em><input type="number" min="0" id="headroom" data-input value="4500"></label>
+              <label>Door cycle allowance <em>seconds</em><input type="number" min="0" step="0.5" id="doorCycle" data-input value="8"></label>
+              <label>Estimated stops factor <em>0–1</em><input type="number" min="0" max="1" step="0.05" id="stopFactor" data-input value="0.65"></label>
+            </div>
+          </article>
+          <article class="panel">
+            <h3>Drive and operating assumptions</h3>
+            <div class="form-grid">
+              <label>Moving mass estimate <em>kg</em><input type="number" min="0" id="movingMass" data-input value="750"></label>
+              <label>Counterweight balance factor <em>0–1</em><input type="number" min="0" max="1" step="0.01" id="balance" data-input value="0.45"></label>
+              <label>Drive efficiency <em>0–1</em><input type="number" min="0.01" max="1" step="0.01" id="efficiency" data-input value="0.8"></label>
+              <label>Acceleration <em>m/s²</em><input type="number" min="0.1" step="0.1" id="acceleration" data-input value="0.8"></label>
+              <label>Operating hours / day<input type="number" min="0" max="24" step="0.5" id="hours" data-input value="12"></label>
+              <label>Average utilization factor <em>0–1</em><input type="number" min="0" max="1" step="0.05" id="utilization" data-input value="0.4"></label>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-traffic">
+        <div class="section-intro"><div><div class="eyebrow">PERFORMANCE ANALYSIS</div><h2>Traffic analysis</h2><p>Simplified up-peak screening model. Use a dedicated simulation for final traffic design.</p></div><span class="tag">PRELIMINARY MODEL</span></div>
+        <div class="metric-grid three">
+          <article class="metric-card"><div class="metric-label">ROUND-TRIP TIME</div><div class="metric-value" id="trafficRtt">— <small>sec</small></div><div class="metric-foot">Estimated group cycle</div></article>
+          <article class="metric-card"><div class="metric-label">AVERAGE INTERVAL</div><div class="metric-value" id="trafficInterval">— <small>sec</small></div><div class="metric-foot">RTT divided by group size</div></article>
+          <article class="metric-card"><div class="metric-label">FIVE-MINUTE HANDLING</div><div class="metric-value" id="trafficHandling">— <small>persons</small></div><div class="metric-foot" id="trafficPct">— of population</div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel span-2">
+            <div class="panel-heading"><div><h3>Round-trip time breakdown</h3><p>Calculated from current inputs</p></div></div>
+            <div id="trafficBreakdown" class="breakdown"></div>
+            <div class="formula-box"><strong>Simplified calculation basis</strong><code>RTT ≈ 2 × travel time + 2 × estimated stops × (dwell + door cycle) + acceleration allowance</code><code>Interval = RTT / number of elevators</code><code>Handling = 300 × estimated passengers per car × group size / RTT</code></div>
+          </article>
+          <article class="panel">
+            <h3>Traffic assumptions</h3>
+            <div class="assumption"><span>Estimated stops</span><strong id="trafficStops">—</strong></div>
+            <div class="assumption"><span>Estimated car occupancy</span><strong id="trafficOccupancy">—</strong></div>
+            <div class="assumption"><span>Target peak demand</span><strong id="trafficTarget">—</strong></div>
+            <div class="assumption"><span>Handling margin</span><strong id="trafficMargin">—</strong></div>
+            <p class="muted small">The simplified stop factor is not a statistical probable-stop calculation. It does not model passenger arrival distributions, zoning, destination dispatch, inter-floor traffic or mixed traffic patterns.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-carshaft">
+        <div class="section-intro"><div><div class="eyebrow">GEOMETRY &amp; ENVELOPE</div><h2>Car &amp; shaft planning</h2><p>Dimensional screening and an indicative plan view.</p></div></div>
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Car plan view</h3><p>Not to scale for construction</p></div><span class="tag">SVG VIEW</span></div>
+            <div class="drawing-wrap"><svg id="carDrawing" viewBox="0 0 420 310" role="img" aria-label="Elevator car and shaft plan drawing"></svg></div>
+            <div class="drawing-legend"><span><i class="legend-shaft"></i> Shaft envelope</span><span><i class="legend-car"></i> Car footprint</span><span><i class="legend-door"></i> Entrance</span></div>
+          </article>
+          <article class="panel">
+            <h3>Calculated geometry</h3>
+            <div class="result-row"><span>Car floor area</span><strong id="carArea">— m²</strong></div>
+            <div class="result-row"><span>Shaft footprint</span><strong id="shaftArea">— m²</strong></div>
+            <div class="result-row"><span>Estimated passengers</span><strong id="carPassengers">— persons</strong></div>
+            <div class="result-row"><span>Area per estimated passenger</span><strong id="areaPerPassenger">— m²</strong></div>
+            <div class="result-row"><span>Travel + pit + headroom</span><strong id="verticalEnvelope">— m</strong></div>
+            <div class="notice notice-amber compact"><strong>Important</strong><p>Do not use generic car-to-shaft allowances as code clearances. Confirm counterweight position, guide rails, brackets, entrances, door operator, tolerances, refuge spaces and all required clearances with the adopted standard and manufacturer layout.</p></div>
+          </article>
+        </div>
+        <article class="panel">
+          <h3>Shaft envelope screening</h3>
+          <div class="result-row"><span>Width allowance used for preliminary screen</span><strong id="widthAllowance">— mm</strong></div>
+          <div class="result-row"><span>Depth allowance used for preliminary screen</span><strong id="depthAllowance">— mm</strong></div>
+          <div id="shaftScreen" class="status-line"></div>
+          <p class="muted small">The default 300 mm perimeter allowance is only a configurable placeholder for early planning, not a requirement in EN 81, IS 17900 or ASME.</p>
+        </article>
+      </section>
+
+      <section class="page" id="page-drive">
+        <div class="section-intro"><div><div class="eyebrow">MACHINE &amp; POWER</div><h2>Drive &amp; energy</h2><p>Indicative power and energy estimates. Final drive sizing requires full load cases and supplier data.</p></div></div>
+        <div class="metric-grid three">
+          <article class="metric-card"><div class="metric-label">INDICATIVE POWER</div><div class="metric-value" id="motorPower">— <small>kW</small></div><div class="metric-foot">Simplified traction estimate</div></article>
+          <article class="metric-card"><div class="metric-label">DAILY ENERGY</div><div class="metric-value" id="dailyEnergy">— <small>kWh</small></div><div class="metric-foot">Group estimate</div></article>
+          <article class="metric-card"><div class="metric-label">ANNUAL ENERGY</div><div class="metric-value" id="annualEnergy">— <small>kWh</small></div><div class="metric-foot">365-day extrapolation</div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel span-2">
+            <h3>Power model</h3>
+            <div class="formula-box"><strong>Indicative power equation</strong><code>P = (m × g × v × k) / (1000 × η)</code><p class="muted small">m = entered effective moving-mass estimate (kg); g = 9.81 m/s²; v = rated speed (m/s); k = balance factor; η = assumed efficiency.</p></div>
+            <div class="result-row"><span>Moving mass input</span><strong id="driveMass">— kg</strong></div>
+            <div class="result-row"><span>Balance factor</span><strong id="driveBalance">—</strong></div>
+            <div class="result-row"><span>Drive efficiency</span><strong id="driveEfficiency">—</strong></div>
+            <div class="result-row"><span>Estimated group daily energy</span><strong id="driveDailyGroup">— kWh</strong></div>
+          </article>
+          <article class="panel">
+            <h3>Additional design checks</h3>
+            <ul class="design-list"><li>Rated motor output and duty cycle</li><li>Starting and running current</li><li>Regenerative drive feasibility</li><li>Brake torque and stopping performance</li><li>Supply voltage, frequency and phase</li><li>Short-circuit protection and cable sizing</li><li>Harmonics, power factor and EMC</li><li>Standby, lighting and auxiliary loads</li></ul>
+          </article>
+        </div>
+        <div class="notice notice-blue"><strong>Model scope</strong><p>Energy = estimated power × operating hours × utilization × number of lifts. The estimate excludes standby use, actual duty cycles, regenerative energy, acceleration/load profiles and auxiliary loads.</p></div>
+      </section>
+
+      <section class="page" id="page-calculators">
+        <div class="section-intro"><div><div class="eyebrow">ENGINEERING TOOLBOX</div><h2>Calculators</h2><p>Independent quick calculators using the current project inputs.</p></div></div>
+        <div class="calculator-grid">
+          <article class="panel calc-card"><div class="calc-icon">↕</div><h3>Travel time</h3><p>One-way constant-speed travel estimate.</p><div class="calc-result" id="calcTravelTime">— s</div></article>
+          <article class="panel calc-card"><div class="calc-icon">▣</div><h3>Car floor area</h3><p>Car width multiplied by car depth.</p><div class="calc-result" id="calcCarArea">— m²</div></article>
+          <article class="panel calc-card"><div class="calc-icon">⌁</div><h3>Car occupancy</h3><p>Rated load divided by assumed passenger mass and loading factor.</p><div class="calc-result" id="calcOccupancy">— persons</div></article>
+          <article class="panel calc-card"><div class="calc-icon">ϟ</div><h3>Traction power</h3><p>Simple effective-mass power estimate.</p><div class="calc-result" id="calcPower">— kW</div></article>
+          <article class="panel calc-card"><div class="calc-icon">◷</div><h3>Daily energy</h3><p>Power, hours, utilization and group size.</p><div class="calc-result" id="calcEnergy">— kWh</div></article>
+          <article class="panel calc-card"><div class="calc-icon">▤</div><h3>Group interval</h3><p>Round-trip time divided by elevator count.</p><div class="calc-result" id="calcInterval">— s</div></article>
+        </div>
+        <article class="panel custom-calc">
+          <div><h3>Custom load / power calculator</h3><p class="muted small">Calculate ideal lifting power for a separate load, height and time input.</p></div>
+          <div class="form-grid three-col">
+            <label>Load <em>kg</em><input id="customLoad" type="number" min="0" value="1000"></label>
+            <label>Lift height <em>m</em><input id="customHeight" type="number" min="0" step="0.1" value="10"></label>
+            <label>Lift time <em>seconds</em><input id="customTime" type="number" min="0.1" step="0.1" value="10"></label>
+          </div>
+          <div class="custom-output"><span>Ideal mechanical lifting power</span><strong id="customPower">9.81 kW</strong></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-compliance">
+        <div class="section-intro"><div><div class="eyebrow">CODE REVIEW WORKSPACE</div><h2>Standards review</h2><p>Checklist prompts for project review. Select the applicable standards profile above.</p></div><span class="tag" id="complianceTag">EN 81</span></div>
+        <div class="notice notice-amber"><strong>Not a compliance certificate</strong><p>This checklist is a project review aid, not a substitute for the licensed standard, local regulations, notified/inspection body review or qualified engineering judgement. Confirm exact edition, amendments, national deviations and jurisdiction.</p></div>
+        <article class="panel">
+          <div class="panel-heading"><div><h3 id="checklistTitle">EN 81 planning checklist</h3><p id="checklistDescription">Applicable scope and edition must be confirmed.</p></div><div class="progress-wrap"><strong id="checkProgress">0%</strong><div class="progress"><i id="progressBar"></i></div></div></div>
+          <div id="checklist" class="checklist"></div>
+        </article>
+        <article class="panel">
+          <h3>Project-specific compliance notes</h3>
+          <textarea id="complianceNotes" rows="5" placeholder="Record clause references, adopted edition, local deviations, review actions and engineer comments..."></textarea>
+        </article>
+      </section>
+
+      <section class="page" id="page-reports">
+        <div class="section-intro"><div><div class="eyebrow">DOCUMENTATION</div><h2>Reports &amp; export</h2><p>Generate a project summary, save a portable project file or print to PDF.</p></div></div>
+        <article class="panel report-panel">
+          <div class="panel-heading"><div><h3>Preliminary engineering report</h3><p>Generated from the current project data</p></div><span class="tag">LIVE DATA</span></div>
+          <div id="reportPreview" class="report-preview"></div>
+          <div class="button-row">
+            <button class="btn btn-primary" id="printReport">Print / Save PDF</button>
+            <button class="btn btn-outline" id="exportJson">Export project JSON</button>
+            <button class="btn btn-outline" id="exportCsv">Export summary CSV</button>
+            <button class="btn btn-outline" id="copyReport">Copy report text</button>
+            <label class="btn btn-outline file-button">Import project JSON<input type="file" id="importJson" accept=".json,application/json"></label>
+          </div>
+        </article>
+      </section>
+      <footer class="app-footer"><span>LiftPlan Pro · Preliminary elevator planning</span><span>HTML · CSS · Vanilla JavaScript · Runs locally</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="js/calculators.js"></script>
+  <script src="js/traffic.js"></script>
+  <script src="js/shaft.js"></script>
+  <script src="js/drive.js"></script>
+  <script src="js/standards.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
